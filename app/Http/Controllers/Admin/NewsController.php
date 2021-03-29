@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\News;
+use App\History;
+use Carbon\Carbon;
 
 class NewsController extends Controller
 {
@@ -42,7 +44,7 @@ class NewsController extends Controller
     //記事検索＋一覧画面表示アクション
     public function index(Request $request) { //一覧表示と検索機能のアクション
         $cond_title = $request->cond_title; //cond_titleは検索された値
-        if($cond_title != '') {
+        if ($cond_title != '') {
             $posts = News::where('title',$cond_title)->get(); //newsテーブルの中のtitleカラムで$cond_title（ユーザーが入力した文字）に一致するレコードをすべて取得する
         } else {
             $posts = News::all(); //cond_titleがnullの時、newsテーブルのレコードを全て$postに代入
@@ -78,13 +80,20 @@ class NewsController extends Controller
         unset($news_form['_token']);
         
         $news->fill($news_form)->save();
-        return redirect('admin/news');
-    }
-    //記事の削除アクション
-    public function delete(Request $request){
-        $news = news::find($request->id);
         
-        $news->delete();
+        //編集履歴をHistoryテーブルに記録
+        $history = new History;
+        $history->news_id = $news->id; //Newsテーブルのidとhistoryテーブルのidを統一する
+        $history->edited_at = Carbon::now(); //現在時刻をedited_atに記録
+        $history->save();
+
         return redirect('admin/news/');
     }
+    //記事の削除アクション
+  public function delete(Request $request){
+      
+      $news = News::find($request->id);
+      $news->delete();
+      return redirect('admin/news/');
+  }  
 }
