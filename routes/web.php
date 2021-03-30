@@ -33,3 +33,5 @@ Route::get('XXX','AAAController@bbb'); //課題3(PHP/Laravel 09 Routingについ
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/', 'NewsController@index');
+Route::get('/profile','ProfileController@index');

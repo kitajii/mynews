@@ -54,11 +54,11 @@ class NewsController extends Controller
     
     //記事編集画面表示アクション
     public function edit(Request $request){
-        $news = News::find($request->id); //find...->id)で該当するidのレコードを丸々配列にして渡す。
+        $news = News::find($request->id); //find...->id)で該当するidのレコードをNewsクラスのインスタンスにして渡す。
         if(empty($news)){
             abort(404);
         }
-        return view('admin.news.edit',['news_form' => $news]);
+        return view('admin.news.edit',['news_form' => $news]); //Newsクラスのインスタンス$newsにnews_formという名前をつけてnews.editに渡す。
     }
     
     //記事編集フォーム送信時アクション
